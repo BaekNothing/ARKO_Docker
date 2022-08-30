@@ -10,17 +10,7 @@ import urllib.request
 from torch.utils.data import DataLoader, Dataset
 from transformers import PreTrainedTokenizerFast
 
-import urllib.request
-
-urllib.request.urlretrieve(
-    "https://raw.githubusercontent.com/songys/Chatbot_data/master/ChatbotData.csv",
-    filename="data/ChatBotData.csv",
-)
 Chatbot_Data = pd.read_csv("../stable/data/ChatBotData.csv")
-
-# Test 용으로 300개 데이터만 처리한다.
-Chatbot_Data = Chatbot_Data[:300]
-Chatbot_Data.head()
 
 BOS = "</s>"
 EOS = "</s>"
@@ -28,8 +18,9 @@ PAD = "<pad>"
 MASK = "<unused0>"
 
 # 허깅페이스 transformers 에 등록된 사전 학습된 koGTP2 토크나이저를 가져온다.
-koGPT2_TOKENIZER = PreTrainedTokenizerFast.from_pretrained("../stable/kogpt2-base-v2", bos_token=BOS, eos_token=EOS, unk_token="<unk>", pad_token=PAD, mask_token=MASK,)
-
+koGPT2_TOKENIZER = PreTrainedTokenizerFast.from_pretrained("../stable/kogpt2-base-v2/config.json",
+                                                           bos_token=BOS, eos_token=EOS, unk_token='<unk>',
+                                                           pad_token=PAD, mask_token=MASK)
 # bos_token : 문장의 시작을 나타내는 token
 # eos_token : 문장의 끝을 나타내는 token
 # unk_token : 모르는 단어를 나타내는 token
