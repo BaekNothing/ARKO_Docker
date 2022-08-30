@@ -11,8 +11,6 @@ from torch.utils.data import DataLoader, Dataset
 from transformers import PreTrainedTokenizerFast
 from transformers import GPT2TokenizerFast
 
-Chatbot_Data = pd.read_csv("../stable/data/ChatBotData.csv")
-
 BOS = "</s>"
 EOS = "</s>"
 PAD = "<pad>"
@@ -117,18 +115,3 @@ def collate_batch(batch):
     mask = [item[1] for item in batch]
     label = [item[2] for item in batch]
     return torch.LongTensor(data), torch.LongTensor(mask), torch.LongTensor(label)
-
-# Dataset 과 DataLoader를 정의 합니다.
-train_set = ChatbotDataset(Chatbot_Data, max_len=40)
-
-#윈도우 환경에서 num_workers 는 무조건 0으로 지정, 리눅스에서는 2
-train_dataloader = DataLoader(train_set, batch_size=32, num_workers=0, shuffle=True, collate_fn=collate_batch,)
-
-# 데이터로더를 사용하여 테스트 데이터를 생성해 봅니다.
-print("start")
-# for batch_idx, samples in enumerate(train_dataloader):
-#     token_ids, mask, label = samples
-#     print("token_ids ====> ", token_ids)
-#     print("mask =====> ", mask)
-#     print("label =====> ", label)
-print("end")
