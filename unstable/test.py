@@ -10,6 +10,7 @@ from pytorch_lightning.core.lightning import LightningModule
 from torch.utils.data import DataLoader, Dataset
 from transformers.optimization import AdamW, get_cosine_schedule_with_warmup
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
+from transformers import GPT2TokenizerFast
 import re
 
 Q_TKN = "<usr>"
@@ -20,29 +21,19 @@ MASK = '<unused0>'
 SENT = '<unused1>'
 PAD = '<pad>'
 
-koGPT2_TOKENIZER = PreTrainedTokenizerFast.from_pretrained("../stable/kogpt2-base-v2/config.json",
+koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("../stable/kogpt2-base-v2",
             bos_token=BOS, eos_token=EOS, unk_token='<unk>',
             pad_token=PAD, mask_token=MASK) 
 model = torch.load("../stable/models/model.bin")
 
-import urllib.request
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
-
-import datetime as dt
-
-now = dt.datetime.now()
-nowDate = now.strftime('%m%d_%H%M')
-
-epoch = 10
-Sneg = -1e18
 
 sent = "0" # 0=일상, 1=부정, 2=긍정
 with torch.no_grad():
     while 1:
         q = input("user > ").strip()
-        if q == "quit":
+        if q == "quit" or q == "exit" or q == "" or q.__len__() == 0:
             break
         a = ""
         while 1:

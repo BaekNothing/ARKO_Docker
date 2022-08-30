@@ -9,6 +9,7 @@ import torch
 import urllib.request
 from torch.utils.data import DataLoader, Dataset
 from transformers import PreTrainedTokenizerFast
+from transformers import GPT2TokenizerFast
 
 Chatbot_Data = pd.read_csv("../stable/data/ChatBotData.csv")
 
@@ -18,7 +19,7 @@ PAD = "<pad>"
 MASK = "<unused0>"
 
 # 허깅페이스 transformers 에 등록된 사전 학습된 koGTP2 토크나이저를 가져온다.
-koGPT2_TOKENIZER = PreTrainedTokenizerFast.from_pretrained("../stable/kogpt2-base-v2/config.json",
+koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("../stable/kogpt2-base-v2",
                                                            bos_token=BOS, eos_token=EOS, unk_token='<unk>',
                                                            pad_token=PAD, mask_token=MASK)
 # bos_token : 문장의 시작을 나타내는 token
