@@ -11,6 +11,14 @@ from torch.utils.data import DataLoader, Dataset
 from transformers import PreTrainedTokenizerFast
 from transformers import GPT2TokenizerFast
 import os
+import os.path
+
+
+folder = os.getcwd()
+print ('folder: %s' % folder)
+
+for filename in os.listdir(folder):
+	print (filename)
 
 BOS = "</s>"
 EOS = "</s>"
