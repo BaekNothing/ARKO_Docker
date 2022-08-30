@@ -21,10 +21,10 @@ MASK = '<unused0>'
 SENT = '<unused1>'
 PAD = '<pad>'
 
-koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("../stable/kogpt2-base-v2",
+koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("stable/kogpt2-base-v2",
             bos_token=BOS, eos_token=EOS, unk_token='<unk>',
             pad_token=PAD, mask_token=MASK, local_files_only=True) 
-model = torch.load("../stable/models/model.bin")
+model = torch.load("stable/models/model.bin")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)

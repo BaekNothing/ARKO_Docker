@@ -4,7 +4,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 COPY ./stable/ .
-copy ./unstable/ .
+copy *.py .
 EXPOSE 80
 ENV NAME World
-CMD ["python","./unstable/test.py"]
+CMD ["python","test.py"]
