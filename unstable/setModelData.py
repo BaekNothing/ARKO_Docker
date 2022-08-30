@@ -10,11 +10,14 @@ import urllib.request
 from torch.utils.data import DataLoader, Dataset
 from transformers import PreTrainedTokenizerFast
 from transformers import GPT2TokenizerFast
+import os
 
 BOS = "</s>"
 EOS = "</s>"
 PAD = "<pad>"
 MASK = "<unused0>"
+
+print(os.getcwd())
 
 # 허깅페이스 transformers 에 등록된 사전 학습된 koGTP2 토크나이저를 가져온다.
 koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("../stable/kogpt2-base-v2",
