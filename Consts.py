@@ -66,12 +66,12 @@ class SetDisplay() :
                     pass    
                 return point
 
-    def ShowColoredText(text, color):
+    def ShowColoredText(text : str, color : str):
         SetDisplay.ChangeColor(color)
         print(text)
         SetDisplay.ChangeColor('white')
 
-    def ChangeColor(code):
+    def ChangeColor(code : str):
         
         colors = {
             'black': 30,
