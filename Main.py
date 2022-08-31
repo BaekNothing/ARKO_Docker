@@ -11,12 +11,13 @@ input()
 os.system("cls")
 choosedNum = Consts.SetDisplay.SetSelectableScreen(["1. Train", "2. Use", "3. Exit"])
 
+resultStr = ""
 if choosedNum == 0 :
-    TrainData.DoTrain()
+    resultStr = TrainData.DoTrain()
 elif choosedNum == 1 :
     UseData.StartModelToUse()
 
-while input("this program will be closed... \nEnter \033[36m quit \033[37m to exit completely\n> ") == "" :
+while input(resultStr + "this program will be closed... \nEnter \033[36m quit \033[37m to exit completely\n> ") == "" :
     os.system("cls")
     pass
 exit()
