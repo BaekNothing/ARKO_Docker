@@ -4,6 +4,7 @@ import pandas as pd
 import re
 import torch
 from torch.utils.data import DataLoader, Dataset
+import sys
 import os
 import os.path
 import datetime as dt
@@ -85,64 +86,96 @@ def collate_batch(batch):
     data = [item[0] for item in batch]
     mask = [item[1] for item in batch]
     label = [item[2] for item in batch]
-    return torch.LongTensor(data), torch.LongTensor(mask), torch.LongTensor(label)
+    return torch.LongTensor(np.array(data)), torch.LongTensor(np.array(mask)), torch.LongTensor(np.array(label))
 
 def DoTrain() :
-    resultString = ""
-
-    modelList = os.listdir("./stable/models/")
-    modelIndex = Consts.SetDisplay.SetSelectableScreen(modelList)
-    modelPath = "./stable/models/" + modelList[modelIndex]
+    modelPath = SetModelPath()
     model = torch.load(modelPath)
-
-    Chatbot_DataList = os.listdir("./stable/data/")
-    Chatbot_DataIndex = Consts.SetDisplay.SetSelectableScreen(Chatbot_DataList)
-    Chatbot_Data = pd.read_csv("./stable/data/" + Chatbot_DataList[Chatbot_DataIndex])
-    Chatbot_Data = Chatbot_Data[:1]
-    Chatbot_Data.head()
-
+    Chatbot_Data = SetChatBotData()
     overWriteFlag = Consts.SetDisplay.SetSelectableScreen(["OverWrite data", "Save new data"])
     
     #if window num_workers is 0 and linux num_workers is 2
-    workers = 0 if platform.system() == "Windows" else 2
-    train_set = ChatbotDataset(Chatbot_Data, max_len=40)
-    train_dataloader = DataLoader(train_set, batch_size=32, num_workers=workers, shuffle=True, collate_fn=collate_batch)
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")   
+    
+    device = SetDevice()
     model.to(device)
     model.train()
 
+    epoch = 10
+    print ("train start")
+    for epoch in range(epoch):
+        print ("epoch : ", epoch)
+        printProgressBar(epoch, 10, prefix = 'Progress:', suffix = 'Complete', decimals=10, barLength = 50)
+        model = TrainEachData(model, Chatbot_Data)
+
+    return SaveModel(model, modelPath, overWriteFlag)
+
+def SetModelPath() :
+    modelList = list(filter(lambda x: x.__contains__('model'), os.listdir("./stable/models/")))
+    modelIndex = Consts.SetDisplay.SetSelectableScreen(modelList)
+    modelPath = "./stable/models/" + modelList[modelIndex]
+    return modelPath
+
+def SetChatBotData() :
+    Chatbot_DataList = os.listdir("./stable/data/")
+    Chatbot_DataIndex = Consts.SetDisplay.SetSelectableScreen(Chatbot_DataList)
+    Chatbot_Data = pd.read_csv(
+        "./stable/data/" + Chatbot_DataList[Chatbot_DataIndex])
+    Chatbot_Data = Chatbot_Data[:30]
+    Chatbot_Data.head()
+    return Chatbot_Data
+
+def SetDevice() :
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    return device
+
+def SetTrainDataLoader(Chatbot_Data: pd.DataFrame):
+    workers = 0 if platform.system() == "Windows" else 2
+    train_set = ChatbotDataset(Chatbot_Data, max_len=40)
+    train_dataloader = DataLoader(
+        train_set, batch_size=32, num_workers=workers, shuffle=True, collate_fn=collate_batch)
+    return train_dataloader
+
+def TrainEachData(model, Chatbot_Data: pd.DataFrame) :
+    train_dataloader = SetTrainDataLoader(Chatbot_Data)
     learning_rate = 3e-5
     criterion = torch.nn.CrossEntropyLoss(reduction="none")
     optimizer = torch.optim.Adam(Consts.model.parameters(), lr=learning_rate)
-    epoch = 10
     Sneg = -1e18
+    for batch_idx, samples in enumerate(train_dataloader):
+        optimizer.zero_grad()
+        token_ids, mask, label = samples
+        out = model(token_ids)
+        out = out.logits
+        mask_3d = mask.unsqueeze(dim=2).repeat_interleave(
+            repeats=out.shape[2], dim=2)
+        mask_out = torch.where(
+            mask_3d == 1, out, Sneg * torch.ones_like(out))
+        loss = criterion(mask_out.transpose(2, 1), label)
+        avg_loss = loss.sum() / mask.sum()
+        avg_loss.backward()
+        optimizer.step()
+    return model
 
-    print ("train start")
-    freeze_support()
-    for epoch in range(epoch):
-        for batch_idx, samples in enumerate(train_dataloader):
-            optimizer.zero_grad()
-            token_ids, mask, label = samples
-            out = model(token_ids)
-            out = out.logits
-            mask_3d = mask.unsqueeze(dim=2).repeat_interleave(repeats=out.shape[2], dim=2)
-            mask_out = torch.where(mask_3d == 1, out, Sneg * torch.ones_like(out))
-            loss = criterion(mask_out.transpose(2, 1), label)
-            avg_loss = loss.sum() / mask.sum()
-            avg_loss.backward()
-            optimizer.step()
-
-    now = dt.datetime.now()
-    nowDate = now.strftime('%m%d_%H%M')
-    torch.save(model.state_dict(), './stable/models/' + str(nowDate) + '_state_dict.bin')
-    
-    resultString += "this model is saved as "
+def SaveModel(model, modelPath, overWriteFlag) :
+    resultString = "this model is saved as "
     if(overWriteFlag == 0):
         torch.save(model, modelPath)
         resultString += modelPath + '\n'
-    else :
+    else:
+        now = dt.datetime.now()
+        nowDate = now.strftime('%m%d_%H%M')
+        # torch.save(model.state_dict(), './stable/models/' +
+        #            str(nowDate) + '_state_dict.bin')
         torch.save(model, './stable/models/' + str(nowDate) + '_model.bin')
         resultString += str(nowDate) + '_model.bin\n'
-    resultString += "train end"
+    resultString += "train end\n"
     return resultString
+
+def printProgressBar(iteration, total, prefix = '', suffix = '', decimals = 1, barLength = 100):
+    filledLength = int(round(barLength * iteration / float(total)))
+    percents = round(100.00 * (iteration / float(total)), decimals)
+    bar = '#' * filledLength + '-' * (barLength - filledLength)
+    sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
+    sys.stdout.flush()
+    if iteration == total:
+        print("\n")
