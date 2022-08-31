@@ -1,3 +1,3 @@
 #!bin/bash 
 
-docker run -it docker_python_1
+docker run -it -p 80:80 docker_python_1
