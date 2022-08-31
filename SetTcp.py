@@ -3,8 +3,8 @@ import socket
 from distutils.log import error
 from tkinter import E
 import Consts
+import platform
 import time
-import keyboard
 import os
 
 isServerRunning = False
@@ -15,12 +15,10 @@ def SetServer():
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(('', 80))
     server_socket.listen()
-    os.system("cls")
+    os.system("cls" if platform.system() == "Windows" else "clear")
     print("server Start : ")
     try:
         while True:
-            if keyboard.is_pressed('q'):
-                break
             if isServerRunning == False:
                 isServerRunning = True
                 client_socket, addr = server_socket.accept()

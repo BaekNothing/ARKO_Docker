@@ -1,7 +1,7 @@
 ﻿import os
-import keyboard
 import time
 import math
+import platform
 from regex import D
 import numpy as np
 import pandas as pd
@@ -43,28 +43,17 @@ class Math() :
 
 class SetDisplay() :
     def SetSelectableScreen(lists : list, point  = 0) :
-        os.system("cls")
-        for i in range(lists.__len__()) :
-            SetDisplay.ShowColoredText(lists[i], 'cyan' if i == point else 'white')
-        while True:
-            if keyboard.is_pressed(72) :
-                point = Math.Clamp(point - 1, 0, lists.__len__() - 1) 
-                os.system("cls")
-                for i in range(lists.__len__()) :
-                    SetDisplay.ShowColoredText(lists[i], 'cyan' if i == point else 'white')
-                time.sleep(0.1)
-                
-            if keyboard.is_pressed(80) :
-                point = Math.Clamp(point + 1, 0, lists.__len__() - 1) 
-                os.system("cls")
-                for i in range(lists.__len__()) :
-                    SetDisplay.ShowColoredText(lists[i], 'cyan' if i == point else 'white')
-                time.sleep(0.1)
-
-            if keyboard.is_pressed('enter') :
-                while keyboard.is_pressed('enter') :
-                    pass    
-                return point
+        inputStr = ""
+        while(not lists.__contains__(inputStr)) :
+            os.system("cls" if platform.system() == "Windows" else "clear")
+            for i in range(len(lists)):
+                print(i, ".", lists[i])
+            SetDisplay.ShowColoredText(
+                "Enter items correctly or numbers for selection", 'cyan')
+            inputStr = input("\n" + "> ")
+            if (int(inputStr) > 0 or int(inputStr) < len(lists)) :
+                return int(inputStr)
+        return lists.index(inputStr)
 
     def ShowColoredText(text : str, color : str):
         SetDisplay.ChangeColor(color)

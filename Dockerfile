@@ -7,4 +7,4 @@ COPY ./stable ./stable
 COPY *.py ./
 EXPOSE 80
 ENV NAME World
-CMD ["python","test.py"]
+CMD ["python","Main.py"]
