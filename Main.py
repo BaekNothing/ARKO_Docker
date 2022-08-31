@@ -1,6 +1,7 @@
 ﻿import Consts
 import UseData
 import TrainData
+import SetTcp
 import os
 
 os.system("cls")
@@ -9,13 +10,15 @@ Consts.SetDisplay.ShowColoredText("if you want to start Press any key\n", 'cyan'
 
 input()
 os.system("cls")
-choosedNum = Consts.SetDisplay.SetSelectableScreen(["1. Train", "2. Use", "3. Exit"])
+choosedNum = Consts.SetDisplay.SetSelectableScreen(["1. Train", "2. Use", "3. SetServer", "4. Exit"])
 
 resultStr = ""
 if choosedNum == 0 :
     resultStr = TrainData.DoTrain()
 elif choosedNum == 1 :
     UseData.StartModelToUse()
+elif choosedNum == 2 :
+    resultStr = SetTcp.SetServer()
 
 while input(resultStr + "this program will be closed... \nEnter \033[36m quit \033[37m to exit completely\n> ") == "" :
     os.system("cls")
