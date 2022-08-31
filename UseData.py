@@ -3,7 +3,6 @@ import Consts
 import os 
 
 def StartModelToUse() :
-    
     with torch.no_grad():
         print("input your question, if you want to exit, input 'exit' or 'quit'")
         while 1:

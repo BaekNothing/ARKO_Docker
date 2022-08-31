@@ -91,7 +91,7 @@ def collate_batch(batch):
 def DoTrain() :
     modelPath = SetModelPath()
     model = torch.load(modelPath)
-    Chatbot_Data = SetChatBotData()
+    Chatbot_Data = SetChatBotData(0, 10)
     overWriteFlag = Consts.SetDisplay.SetSelectableScreen(["OverWrite data", "Save new data"])
     
     #if window num_workers is 0 and linux num_workers is 2
@@ -103,7 +103,6 @@ def DoTrain() :
     epoch = 10
     print ("train start")
     for epoch in range(epoch):
-        print ("epoch : ", epoch)
         printProgressBar(epoch, 10, prefix = 'Progress:', suffix = 'Complete', decimals=10, barLength = 50)
         model = TrainEachData(model, Chatbot_Data)
 
@@ -111,16 +110,27 @@ def DoTrain() :
 
 def SetModelPath() :
     modelList = list(filter(lambda x: x.__contains__('model'), os.listdir("./stable/models/")))
+    if modelList.__len__ == 0 : 
+        print("There is no model")
+        exit()
     modelIndex = Consts.SetDisplay.SetSelectableScreen(modelList)
     modelPath = "./stable/models/" + modelList[modelIndex]
     return modelPath
 
-def SetChatBotData() :
-    Chatbot_DataList = os.listdir("./stable/data/")
+def SetChatBotData(startIndex : int, endIndex : int) :
+    if(startIndex < 0 or endIndex < 0 or endIndex <= startIndex) :
+        print("Invalid index")
+        exit()
+
+    Chatbot_DataList = list(filter(lambda x : x.__contains__('csv'), os.listdir("./stable/data/")))
+    if Chatbot_DataList.__len__ == 0 :
+        print("There is no data")
+        exit()
+
     Chatbot_DataIndex = Consts.SetDisplay.SetSelectableScreen(Chatbot_DataList)
     Chatbot_Data = pd.read_csv(
         "./stable/data/" + Chatbot_DataList[Chatbot_DataIndex])
-    Chatbot_Data = Chatbot_Data[:30]
+    Chatbot_Data = Chatbot_Data[startIndex : endIndex]
     Chatbot_Data.head()
     return Chatbot_Data
 
