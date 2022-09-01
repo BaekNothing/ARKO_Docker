@@ -19,7 +19,7 @@ if choosedNum == 0 :
 elif choosedNum == 1 :
     UseData.StartModelToUse()
 elif choosedNum == 2 :
-    resultStr = SetTcp.SetServer()
+    SetTcp.SetServer()
 
 while input(resultStr + "this program will be closed... \nEnter \033[36m quit \033[37m to exit completely\n> ") == "" :
     os.system("cls" if platform.system() == "Windows" else "clear")
