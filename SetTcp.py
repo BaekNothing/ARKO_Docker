@@ -32,7 +32,7 @@ def SetServer():
 def SetServerSocket():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind(('', 80))
+    server_socket.bind(('', 1280))
     server_socket.listen()
     server_socket.settimeout(0.5)
     return server_socket

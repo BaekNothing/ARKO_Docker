@@ -11,7 +11,7 @@ Consts.SetDisplay.ShowColoredText("if you want to start Press any key\n", 'cyan'
 
 input()
 os.system("cls" if platform.system() == "Windows" else "clear")
-choosedNum = Consts.SetDisplay.SetSelectableScreen(["Train", "Use", "SetServer", "Exit"])
+choosedNum = Consts.SetDisplay.SetSelectableScreen(["Train", "Talk", "Server", "Exit"])
 
 resultStr = ""
 if choosedNum == 0 :
