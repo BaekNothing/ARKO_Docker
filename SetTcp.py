@@ -18,15 +18,16 @@ def SetServer():
             except socket.timeout :
                 continue
 
-            serverThread = threading.Thread(target=binder, args=(client_socket, addr)).start()
-            while serverThread.isAlive():
+            serverThread = threading.Thread(target=binder, args=(client_socket, addr))
+            serverThread.start()
+            while serverThread.is_alive():
                 serverThread.join(1)
     except KeyboardInterrupt:
         print("\033[31m mainThreadStop : by KeyboardInterrup \033[37m")
     except Exception as e:
         print("\033[31m mainThreadDown by :", e, '\033[37m')
     finally:
-        server_socket.close()        
+        server_socket.close()       
 
 ##############################################################################################
 def SetServerSocket():
@@ -37,13 +38,12 @@ def SetServerSocket():
     server_socket.settimeout(0.5)
     return server_socket
 
-def SendMessageToConnectedTarget(client_socket : socket, data :str) : 
-    Consts.SetDisplay.ShowColoredText("Message > [{}] sended".format(data), 'cyan')
+def SendMessageToConnectedTarget(client_socket : socket, data :bytes) : 
+    #Consts.SetDisplay.ShowColoredText("Message > [{}] sended".format(data.decode()), 'cyan')
     client_socket.sendall(len(data).to_bytes(4, byteorder='big'))
     client_socket.sendall(data)
 
 def binder(client_socket, addr):
-  SendMessageToConnectedTarget(client_socket, "server connected : {}".format(addr))
   try:
     startTime = time.time()
     msg = GetMessage(client_socket, addr)
@@ -75,4 +75,5 @@ def SendMessageToGPT(msg):
         if gen == Consts.EOS:
             break
         answer += gen.replace("▁", " ")
+    Consts.SetDisplay.ShowColoredText("Chatbot > {}".format(answer.strip()), 'cyan')
     return answer.strip()
