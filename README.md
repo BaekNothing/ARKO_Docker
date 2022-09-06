@@ -42,11 +42,11 @@ python Main.py
 
 > stable/
 >
-> |-- data/ChaBotData.csv, 
+> ├── data / ChaBotData.csv
 >
-> |--kogpt2-base-v2/
+> ├── kogpt2-base-v2 /
 >
-> |--models/model.bin
+> └── models / model.bin
 
 
 
