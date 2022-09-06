@@ -51,7 +51,7 @@ class SetDisplay() :
             SetDisplay.ShowColoredText(
                 "Enter items correctly or numbers for selection", 'cyan')
             inputStr = input("\n" + "> ")
-            if (int(inputStr) > 0 or int(inputStr) < len(lists)) :
+            if (int(inputStr) >= 0 or int(inputStr) < len(lists)) :
                 return int(inputStr)
         return lists.index(inputStr)
 

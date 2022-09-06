@@ -38,6 +38,16 @@ pip install --trusted-host pypi.python.org -r requirements.txt
 python Main.py
 ```
 
+** Git에서 Clone하는 경우** 다음의 폴더/파일을 추가할 것 
+
+> stable/
+>
+> |-- data/ChaBotData.csv, 
+>
+> |--kogpt2-base-v2/
+>
+> |--models/model.bin
+
 
 
 ## Flow Chart

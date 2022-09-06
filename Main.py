@@ -6,7 +6,7 @@ import platform
 import os
 import sys
 
-if(sys.argv[1] == "RunServerDirectly") :
+if (sys.argv.__len__() >= 2 and sys.argv[1] == "RunServerDirectly") :
     SetTcp.SetServer()
 else :
     os.system("cls" if platform.system() == "Windows" else "clear")
