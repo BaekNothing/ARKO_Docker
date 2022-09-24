@@ -1,6 +1,6 @@
 ﻿import Consts
-import UseData
-import TrainData
+import ChatBot
+import TextGen
 import SetTcp
 import platform
 import os
@@ -15,15 +15,17 @@ else :
 
     input()
     os.system("cls" if platform.system() == "Windows" else "clear")
-    choosedNum = Consts.SetDisplay.SetSelectableScreen(["Train", "Talk", "Server", "Exit"])
+    choosedNum = Consts.SetDisplay.SetSelectableScreen(["Train", "Talk", "Server", "TextGen", "Exit"])
 
     resultStr = ""
     if choosedNum == 0 :
-        resultStr = TrainData.DoTrain()
+        resultStr = ChatBot.DoTrain()
     elif choosedNum == 1 :
-        UseData.StartModelToUse()
+        ChatBot.SetChatBot()
     elif choosedNum == 2 :
         SetTcp.SetServer()
+    elif choosedNum == 3 :
+        TextGen.SetTextGen()
     while input(resultStr + "this program will be closed... \nEnter \033[36m quit \033[37m to exit completely\n> ") == "" :
         os.system("cls" if platform.system() == "Windows" else "clear")
         pass

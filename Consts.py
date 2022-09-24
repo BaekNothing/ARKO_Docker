@@ -23,19 +23,48 @@ MASK = '<unused0>'
 SENT = '<unused1>'
 PAD = '<pad>'
 
+#load ChatBotModel
+chatbotPath = 'stable/models/'
+chatbotName = 'model.bin'
 koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("stable/kogpt2-base-v2",
             bos_token=BOS, eos_token=EOS, unk_token='<unk>',
             pad_token=PAD, mask_token=MASK, local_files_only=True) 
-model = torch.load("stable/models/model.bin")
+chatbotModel = torch.load("stable/models/model.bin")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
+chatbotModel.to(device)
 
-def SendStringToTorch(q, sent, a) : 
+def SendStringToChatBot(q, sent, a) : 
     return torch.LongTensor(koGPT2_TOKENIZER.encode(Q_TKN + q + SENT + sent + A_TKN + a)).unsqueeze(dim=0)
 
-def ConvertIdsToTokens(pred) :
-    return koGPT2_TOKENIZER.convert_ids_to_tokens(torch.argmax(pred, dim=-1).squeeze().numpy().tolist())[-1]
+def ConvertIdsToTokens(inputModel) :
+    return koGPT2_TOKENIZER.convert_ids_to_tokens(torch.argmax(inputModel, dim=-1).squeeze().numpy().tolist())[-1]
+
+#load TextGen 
+textGenPath = "./stable/textGenModels/"
+textGenName = "pytorch_model.bin"
+if not os.path.exists(textGenPath + textGenName):
+    textGenModel = GPT2LMHeadModel.from_pretrained('skt/kogpt2-base-v2')
+    textGenModel.save_pretrained(textGenPath)
+else:
+    textGenModel = GPT2LMHeadModel.from_pretrained(textGenPath)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+textGenModel.to(device)
+
+
+
+def SendStringToTextGen(msg : str) -> str :
+    input_ids = torch.LongTensor(koGPT2_TOKENIZER.encode(msg)).unsqueeze(dim=0)
+    output = textGenModel.generate(input_ids,
+                                max_length=128,
+                                repetition_penalty=2.0,
+                                pad_token_id=koGPT2_TOKENIZER.pad_token_id,
+                                eos_token_id=koGPT2_TOKENIZER.eos_token_id,
+                                bos_token_id=koGPT2_TOKENIZER.bos_token_id,
+                                use_cache=True)
+    return koGPT2_TOKENIZER.decode(output[0])
+
 
 class Math() :
     def Clamp(x, min, max) :

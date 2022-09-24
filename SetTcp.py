@@ -50,13 +50,21 @@ def binder(client_socket, addr):
     if len(msg) <= 1:
         client_socket.close()
         return
-    data = SendMessageToGPT(msg).encode()
+
+    data = 'no mached key'
+    if msg[0] == 'C' :    
+        data = SendMessageToChatBot(msg[1:len(msg) - 1]).encode()
+    elif msg[1] == 'G' :
+        data = SendMessageToTextGen(msg[1:len(msg) - 1]).encode()
+
     Consts.SetDisplay.ShowColoredText("sendTime : " + str(time.time() - startTime), 'yellow')
     SendMessageToConnectedTarget(client_socket, data)
   except Exception as e:
     print("\033[31m binderDown by : ", e, "from : ", addr, '\033[37m')
   finally:
     client_socket.close()
+
+
 
 def GetMessage(client_socket, addr):
     data = client_socket.recv(4)
@@ -66,14 +74,17 @@ def GetMessage(client_socket, addr):
     print('Received from :', addr, msg)
     return msg
 
-def SendMessageToGPT(msg):
+def SendMessageToChatBot(msg):
     sent = "0"  # 0=일상, 1=부정, 2=긍정
     answer = ""
     while 1:
-        input_ids = Consts.SendStringToTorch(msg, sent, answer)
-        gen = Consts.ConvertIdsToTokens(Consts.model(input_ids).logits)
+        input_ids = Consts.SendStringToChatBot(msg, sent, answer)
+        gen = Consts.ConvertIdsToTokens(Consts.chatbotModel(input_ids).logits)
         if gen == Consts.EOS:
             break
         answer += gen.replace("▁", " ")
     Consts.SetDisplay.ShowColoredText("Chatbot > {}".format(answer.strip()), 'cyan')
     return answer.strip()
+
+def SendMessageToTextGen(msg) -> str:
+    return Consts.SendStringToTextGen(msg)

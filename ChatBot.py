@@ -149,7 +149,7 @@ def TrainEachData(model, Chatbot_Data: pd.DataFrame) :
     train_dataloader = SetTrainDataLoader(Chatbot_Data)
     learning_rate = 3e-5
     criterion = torch.nn.CrossEntropyLoss(reduction="none")
-    optimizer = torch.optim.Adam(Consts.model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(Consts.chatbotModel.parameters(), lr=learning_rate)
     Sneg = -1e18
     for batch_idx, samples in enumerate(train_dataloader):
         optimizer.zero_grad()
@@ -189,3 +189,23 @@ def printProgressBar(iteration, total, prefix = '', suffix = '', decimals = 1, b
     sys.stdout.flush()
     if iteration == total:
         print("\n")
+
+def SetChatBot() :
+    with torch.no_grad():
+        print("input your question, if you want to exit, input 'exit' or 'quit'")
+        while 1:
+            q = ""
+            while (q == "") :
+                q = input("user > ").strip()
+            if q == "quit" or q == "exit" :
+                break
+
+            sent = "0" # 0=일상, 1=부정, 2=긍정
+            a = ""
+            while 1:
+                input_ids = Consts.SendStringToChatBot(q, sent, a)
+                gen = Consts.ConvertIdsToTokens(Consts.chatbotModel(input_ids).logits)
+                if gen == Consts.EOS:
+                    break
+                a += gen.replace("▁", " ")
+            Consts.SetDisplay.ShowColoredText("Chatbot > {}".format(a.strip()), 'cyan')
