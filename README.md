@@ -56,13 +56,17 @@ python Main.py
 graph LR
 	Start[Main.py]
 	Option{Choose Mode}
-	Train[TrainData.py]
-	UseData[UseData.py]
+	ChatBot[Chatbot.py]
+	TextGen[TextGen.py]
+	Sentiment[Sentiment.py]
+	Summarization[Summarization.py]
 	SetTcp[SetTcp.py]
 	
 	Start --> Option
-	Option --> Train
-	Option --> UseData
+	Option --> ChatBot
+	Option --> TextGen
+	Option --> Sentiment
+	Option --> Summarization
 	Option --> SetTcp
 	Start -- RunServerDirectly --> SetTcp
 	
@@ -75,21 +79,34 @@ graph LR
 ```mermaid
 classDiagram
 	class Consts{
-		torchModel
+		eachModels
 	}
-	class TrainData{
+	class ChatBot{
 		train()
+		setChatBot()
 	}
-	class UseData{
-		talk()
+	class TextGen{
+		setTextGen()
 	}
+	class Summarization{
+		setSummarize()
+	}
+	class Sentiment{
+		setSentiment()
+	}
+	
 	class SetTcp{
 		setTcpServer()
 	}
 	
-	Consts <.. TrainData
-	Consts <.. UseData
-	Consts <.. SetTcp
+	Consts <.. ChatBot
+	Consts <.. TextGen
+	Consts <.. Summarization
+	Consts <.. Sentiment
+	ChatBot <.. SetTcp
+	TextGen <.. SetTcp
+	Summarization <.. SetTcp
+	Sentiment <.. SetTcp
 	
 ```
 
