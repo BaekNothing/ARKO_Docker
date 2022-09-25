@@ -34,6 +34,12 @@ chatbotModel = torch.load("stable/models/model.bin")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 chatbotModel.to(device)
 
+def SwitchChatBotModel(path) : 
+    global chatbotModel
+    chatbotModel = torch.load(path)
+    chatbotModel.to(device)
+    return chatbotModel
+
 def SendStringToChatBot(q, sent, a) : 
     return torch.LongTensor(koGPT2_TOKENIZER.encode(Q_TKN + q + SENT + sent + A_TKN + a)).unsqueeze(dim=0)
 

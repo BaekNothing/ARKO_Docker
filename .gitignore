@@ -1,2 +1,4 @@
 stable/*
 *.pyc
+NLP_PreTrained.zip
+*.ipynb

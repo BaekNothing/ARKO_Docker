@@ -51,11 +51,11 @@ def binder(client_socket, addr):
         client_socket.close()
         return
 
-    data = 'no mached key'
+    data = "no mached key".encode()
     if msg[0] == 'C' :    
-        data = SendMessageToChatBot(msg[1:len(msg) - 1]).encode()
-    elif msg[1] == 'G' :
-        data = SendMessageToTextGen(msg[1:len(msg) - 1]).encode()
+        data = SendMessageToChatBot(msg).encode()
+    elif msg[0] == 'G' :
+        data = SendMessageToTextGen(msg).encode()
 
     Consts.SetDisplay.ShowColoredText("sendTime : " + str(time.time() - startTime), 'yellow')
     SendMessageToConnectedTarget(client_socket, data)
@@ -70,7 +70,7 @@ def GetMessage(client_socket, addr):
     data = client_socket.recv(4)
     length = int.from_bytes(data, "big")
     data = client_socket.recv(length)
-    msg = data.decode()
+    msg = data.decode('utf-8')
     print('Received from :', addr, msg)
     return msg
 
@@ -86,5 +86,5 @@ def SendMessageToChatBot(msg):
     Consts.SetDisplay.ShowColoredText("Chatbot > {}".format(answer.strip()), 'cyan')
     return answer.strip()
 
-def SendMessageToTextGen(msg) -> str:
+def SendMessageToTextGen(msg):
     return Consts.SendStringToTextGen(msg)

@@ -191,6 +191,9 @@ def printProgressBar(iteration, total, prefix = '', suffix = '', decimals = 1, b
         print("\n")
 
 def SetChatBot() :
+    modelPath = SetModelPath()
+    Consts.chatbotModel = Consts.SwitchChatBotModel(modelPath)
+
     with torch.no_grad():
         print("input your question, if you want to exit, input 'exit' or 'quit'")
         while 1:

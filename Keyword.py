@@ -27,12 +27,12 @@ doc = """
 
       """
 
-komoran = Komoran(model_path="/home/jeong/PyKomoran/models-full")
-print(komoran.get_plain_text("KOMORAN은 한국어 형태소 분석기입니다."))
-# okt = Okt()
+# komoran = Komoran()
+# print(komoran.get_plain_text("KOMORAN은 한국어 형태소 분석기입니다."))
+okt = Okt()
 
-# tokenized_doc = okt.pos(doc)
-# tokenized_nouns = ' '.join([word[0] for word in tokenized_doc if word[1] == 'Noun'])
+tokenized_doc = okt.pos(doc)
+tokenized_nouns = ' '.join([word[0] for word in tokenized_doc if word[1] == 'Noun'])
 
 tokenized_nouns = doc
 
