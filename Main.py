@@ -3,6 +3,7 @@ import ChatBot
 import TextGen
 import SetTcp
 import platform
+import Sentiment
 import os
 import sys
 
@@ -15,7 +16,7 @@ else :
 
     input()
     os.system("cls" if platform.system() == "Windows" else "clear")
-    choosedNum = Consts.SetDisplay.SetSelectableScreen(["Train", "Talk", "Server", "TextGen", "Exit"])
+    choosedNum = Consts.SetDisplay.SetSelectableScreen(["Train", "Talk", "Server", "TextGen", "Sentiment", "Exit"])
 
     resultStr = ""
     if choosedNum == 0 :
@@ -26,6 +27,8 @@ else :
         SetTcp.SetServer()
     elif choosedNum == 3 :
         TextGen.SetTextGen()
+    elif choosedNum == 4 : 
+        Sentiment.SetSentiment()
     while input(resultStr + "this program will be closed... \nEnter \033[36m quit \033[37m to exit completely\n> ") == "" :
         os.system("cls" if platform.system() == "Windows" else "clear")
         pass

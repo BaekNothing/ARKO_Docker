@@ -10,6 +10,7 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.core.lightning import LightningModule
 from torch.utils.data import DataLoader, Dataset
+from transformers import pipeline
 from transformers.optimization import AdamW, get_cosine_schedule_with_warmup
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 from transformers import GPT2TokenizerFast
@@ -58,7 +59,19 @@ else:
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 textGenModel.to(device)
 
+#load Sentiment
+sentPath = "./stable/sentiment/"
+if not os.path.exists(sentPath):
+    sentClassifier_ko = pipeline(
+        task="sentiment-analysis", device=-1, model="nlptown/bert-base-multilingual-uncased-sentiment")
+    os.mkdir(sentPath)
+    sentClassifier_ko.save_pretrained(sentPath)
+else:
+    sentClassifier_ko = pipeline(
+        task="sentiment-analysis", device=-1, model=sentPath)
 
+def SendStringToSentiment(msg : str) -> str :
+    return str(sentClassifier_ko(msg)[0])
 
 def SendStringToTextGen(msg : str) -> str :
     input_ids = torch.LongTensor(koGPT2_TOKENIZER.encode(msg)).unsqueeze(dim=0)

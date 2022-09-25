@@ -56,6 +56,8 @@ def binder(client_socket, addr):
         data = SendMessageToChatBot(msg).encode()
     elif msg[0] == 'G' :
         data = SendMessageToTextGen(msg).encode()
+    elif msg[0] == 'S' : 
+        data = SendMessageToSentiment(msg).encode()
 
     Consts.SetDisplay.ShowColoredText("sendTime : " + str(time.time() - startTime), 'yellow')
     SendMessageToConnectedTarget(client_socket, data)
@@ -88,3 +90,6 @@ def SendMessageToChatBot(msg):
 
 def SendMessageToTextGen(msg):
     return Consts.SendStringToTextGen(msg)
+
+def SendMessageToSentiment(msg):
+    return Consts.SendStringToSentiment(msg)
