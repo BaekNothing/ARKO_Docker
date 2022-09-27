@@ -27,10 +27,21 @@ PAD = '<pad>'
 #load ChatBotModel
 chatbotPath = 'stable/models/'
 chatbotName = 'model.bin'
-koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("stable/kogpt2-base-v2",
-            bos_token=BOS, eos_token=EOS, unk_token='<unk>',
-            pad_token=PAD, mask_token=MASK, local_files_only=True) 
-chatbotModel = torch.load("stable/models/model.bin")
+
+if not os.path.exists('stable/kogpt2-base-v2/') or not os.path.exists('stable/models/model.bin') :
+    koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("skt/kogpt2-base-v2")
+    chatbotModel = GPT2LMHeadModel.from_pretrained('stable/kogpt2-base-v2/')
+    os.mkdir('stable/kogpt2-base-v2/')
+    os.mkdir('stable/models/')
+
+    koGPT2_TOKENIZER.save_pretrained('stable/kogpt2-base-v2/')
+    torch.save(chatbotModel, 'stable/models/model.bin')
+else :
+    koGPT2_TOKENIZER = GPT2TokenizerFast.from_pretrained("stable/kogpt2-base-v2",
+                bos_token=BOS, eos_token=EOS, unk_token='<unk>',
+                pad_token=PAD, mask_token=MASK, local_files_only=True) 
+    chatbotModel = torch.load("stable/models/model.bin")
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 chatbotModel.to(device)
@@ -52,6 +63,7 @@ textGenPath = "./stable/textGenModels/"
 textGenName = "pytorch_model.bin"
 if not os.path.exists(textGenPath + textGenName):
     textGenModel = GPT2LMHeadModel.from_pretrained('skt/kogpt2-base-v2')
+    os.mkdir(textGenPath)
     textGenModel.save_pretrained(textGenPath)
 else:
     textGenModel = GPT2LMHeadModel.from_pretrained(textGenPath)
